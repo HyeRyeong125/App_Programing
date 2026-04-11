@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상식 퀴즈 챌린지</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- 메인 화면 -->
+    <section id="home-screen" class="screen">
+      <div class="card">
+        <h1 class="title">🧠 상식 퀴즈 챌린지</h1>
+        <p class="subtitle">한국사 · 과학 · 지리 · 일반상식</p>
+        <p class="description">4개 카테고리, 총 40문제에 도전하세요!</p>
+        <div class="input-group">
+          <label for="nickname-input">닉네임</label>
+          <input type="text" id="nickname-input" placeholder="닉네임을 입력하세요" maxlength="10" autocomplete="off">
+          <p id="nickname-error" class="error-msg hidden">닉네임을 입력해 주세요.</p>
+        </div>
+        <div class="btn-group">
+          <button id="start-btn" class="btn btn-primary">🎮 게임 시작</button>
+          <button id="ranking-btn" class="btn btn-secondary">🏆 순위 보기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 퀴즈 화면 -->
+    <section id="quiz-screen" class="screen hidden">
+      <div class="card">
+        <div class="quiz-header">
+          <span id="quiz-category" class="category-badge">📜 한국사</span>
+          <span id="quiz-progress-text" class="progress-text">문제 1/10</span>
+        </div>
+        <div class="progress-bar">
+          <div id="quiz-progress-bar" class="progress-fill"></div>
+        </div>
+        <h2 id="quiz-question" class="question">문제가 여기에 표시됩니다.</h2>
+        <div id="quiz-options" class="options"></div>
+        <div id="quiz-feedback" class="feedback hidden"></div>
+        <button id="next-btn" class="btn btn-primary hidden">다음 문제 →</button>
+        <div class="quiz-footer">
+          <span id="quiz-score">현재 점수: 0/0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 카테고리 전환 화면 -->
+    <section id="category-transition-screen" class="screen hidden">
+      <div class="card text-center">
+        <h2 id="transition-result" class="transition-result">📊 한국사 결과: 8/10</h2>
+        <div class="transition-next">
+          <p>다음 카테고리</p>
+          <h3 id="transition-next-category" class="next-category">🔬 과학</h3>
+        </div>
+        <button id="continue-btn" class="btn btn-primary">계속하기 →</button>
+      </div>
+    </section>
+
+    <!-- 최종 결과 화면 -->
+    <section id="result-screen" class="screen hidden">
+      <div class="card text-center">
+        <h1 class="result-title">🎉 퀴즈 완료!</h1>
+        <div class="result-score">
+          <span id="result-total" class="total-score">32 / 40</span>
+          <span id="result-percent" class="percent">(80%)</span>
+        </div>
+        <div id="result-grade" class="grade">A 🥇</div>
+        <p id="result-message" class="grade-message">상식 전문가!</p>
+        <div id="result-rank-info" class="rank-info hidden"></div>
+        <div id="result-categories" class="category-scores"></div>
+        <div class="btn-group">
+          <button id="retry-btn" class="btn btn-primary">🔄 다시 하기</button>
+          <button id="home-btn" class="btn btn-secondary">🏠 메인으로</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 순위 화면 -->
+    <section id="ranking-screen" class="screen hidden">
+      <div class="card">
+        <h1 class="title">🏆 순위표</h1>
+        <div id="ranking-table-container"></div>
+        <div class="btn-group">
+          <button id="ranking-home-btn" class="btn btn-secondary">🏠 메인으로</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/ranking.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

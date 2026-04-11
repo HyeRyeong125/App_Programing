@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍳 냉장고 레시피 - Smart Fridge Recipe</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 네비게이션 바 -->
+  <nav class="nav-bar">
+    <button class="nav-btn active" data-nav="main">📷 재료인식</button>
+    <button class="nav-btn" data-nav="saved">📚 저장목록</button>
+    <button class="nav-btn" data-nav="profile">👤 프로필</button>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>🍳 냉장고 레시피</h1>
+      <p class="subtitle">Smart Fridge Recipe</p>
+    </header>
+
+    <!-- Step 1: 이미지 업로드 -->
+    <section id="step-upload" class="step active">
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone__prompt">
+          <span class="drop-zone__icon">📷</span>
+          <p>냉장고 사진을 업로드하세요</p>
+          <p class="drop-zone__hint">드래그 앤 드롭 또는 클릭</p>
+        </div>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" hidden>
+      </div>
+
+      <!-- 이미지 미리보기 -->
+      <div id="preview-container" class="preview-container hidden">
+        <img id="preview-image" alt="업로드된 이미지">
+        <button id="btn-remove-image" class="btn-icon" title="이미지 제거">✕</button>
+      </div>
+
+      <!-- 분석 버튼 -->
+      <button id="btn-analyze" class="btn btn-primary hidden">🔍 재료 인식하기</button>
+
+      <!-- 로딩 -->
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>AI가 재료를 분석하고 있습니다...</p>
+      </div>
+
+      <!-- 에러 -->
+      <div id="error-message" class="error-message hidden">
+        <p id="error-text"></p>
+        <button id="btn-retry" class="btn btn-secondary">다시 시도</button>
+      </div>
+    </section>
+
+    <!-- Step 2: 재료 목록 -->
+    <section id="step-ingredients" class="step hidden">
+      <h2>🥗 인식된 재료</h2>
+      <div id="ingredients-list" class="ingredients-list"></div>
+
+      <div class="add-ingredient">
+        <input type="text" id="ingredient-input" placeholder="재료 추가..." maxlength="20">
+        <button id="btn-add-ingredient" class="btn btn-small">+ 추가</button>
+      </div>
+
+      <div class="step-actions">
+        <button id="btn-back" class="btn btn-secondary">← 다시 촬영</button>
+        <button id="btn-next" class="btn btn-primary">🍳 레시피 추천받기</button>
+      </div>
+    </section>
+
+    <!-- Step 3: 요리 조건 설정 -->
+    <section id="step-options" class="step hidden">
+      <h2>⚙️ 요리 조건 설정</h2>
+
+      <div class="options-summary">
+        <p>📋 선택된 재료: <span id="options-ingredients-summary"></span></p>
+      </div>
+
+      <div class="option-group">
+        <label>👥 인원수</label>
+        <div class="option-buttons" data-name="servings">
+          <button class="opt-btn" data-value="1인분">1인분</button>
+          <button class="opt-btn active" data-value="2인분">2인분</button>
+          <button class="opt-btn" data-value="3~4인분">3~4인분</button>
+          <button class="opt-btn" data-value="5인분 이상">5인분+</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>📊 난이도</label>
+        <div class="option-buttons" data-name="difficulty">
+          <button class="opt-btn active" data-value="초급">초급</button>
+          <button class="opt-btn" data-value="중급">중급</button>
+          <button class="opt-btn" data-value="고급">고급</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>🍽️ 요리 종류</label>
+        <div class="option-buttons" data-name="cuisine">
+          <button class="opt-btn active" data-value="한식">한식</button>
+          <button class="opt-btn" data-value="중식">중식</button>
+          <button class="opt-btn" data-value="일식">일식</button>
+          <button class="opt-btn" data-value="양식">양식</button>
+          <button class="opt-btn" data-value="기타">기타</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>⏰ 조리 시간</label>
+        <div class="option-buttons" data-name="time">
+          <button class="opt-btn" data-value="15분 이내">15분</button>
+          <button class="opt-btn active" data-value="30분 이내">30분</button>
+          <button class="opt-btn" data-value="1시간 이내">1시간</button>
+          <button class="opt-btn" data-value="상관없음">무관</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>💬 추가 요청사항</label>
+        <input type="text" id="extra-request" class="input-full" placeholder="예: 매운 것 빼고, 다이어트용..." maxlength="100">
+      </div>
+
+      <div class="step-actions">
+        <button id="btn-back-to-ingredients" class="btn btn-secondary">← 재료 수정</button>
+        <button id="btn-generate" class="btn btn-primary">🍳 레시피 생성하기</button>
+      </div>
+
+      <!-- 로딩 -->
+      <div id="recipe-loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>AI가 레시피를 생성하고 있습니다...</p>
+      </div>
+
+      <!-- 에러 -->
+      <div id="recipe-error" class="error-message hidden">
+        <p id="recipe-error-text"></p>
+        <button id="btn-recipe-retry" class="btn btn-secondary">다시 시도</button>
+      </div>
+    </section>
+
+    <!-- Step 4: 레시피 목록 -->
+    <section id="step-recipes" class="step hidden">
+      <h2>🍳 추천 레시피</h2>
+      <div id="recipe-cards" class="recipe-cards"></div>
+      <div class="step-actions">
+        <button id="btn-back-to-options" class="btn btn-secondary">← 조건 다시 설정</button>
+        <button id="btn-regenerate" class="btn btn-primary">🔄 다시 생성</button>
+      </div>
+    </section>
+
+    <!-- Step 5: 상세 레시피 -->
+    <section id="step-detail" class="step hidden">
+      <div id="recipe-detail"></div>
+      <div class="step-actions">
+        <button id="btn-back-to-list" class="btn btn-secondary">← 목록으로</button>
+        <button id="btn-save-recipe" class="btn btn-primary">💾 레시피 저장</button>
+      </div>
+    </section>
+
+    <!-- 프로필 페이지 -->
+    <section id="page-profile" class="page hidden">
+      <h2>👤 내 프로필</h2>
+
+      <div class="form-group">
+        <label>닉네임</label>
+        <input type="text" id="profile-nickname" class="input-full" placeholder="닉네임을 입력하세요" maxlength="20">
+      </div>
+
+      <div class="form-group">
+        <label>🚫 알레르기 / 못 먹는 재료</label>
+        <div id="allergy-tags" class="tags-container"></div>
+        <div class="add-ingredient">
+          <input type="text" id="allergy-input" placeholder="재료명 입력..." maxlength="20">
+          <button id="btn-add-allergy" class="btn btn-small">+ 추가</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🥗 식단 선호</label>
+        <div class="option-buttons" data-name="dietType">
+          <button class="opt-btn active" data-value="일반">일반</button>
+          <button class="opt-btn" data-value="채식">채식</button>
+          <button class="opt-btn" data-value="비건">비건</button>
+          <button class="opt-btn" data-value="저탄수화물">저탄수화물</button>
+          <button class="opt-btn" data-value="고단백">고단백</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🌶️ 매운맛 선호</label>
+        <div class="option-buttons" data-name="spiceLevel">
+          <button class="opt-btn" data-value="안 매움">안 매움</button>
+          <button class="opt-btn active" data-value="보통">보통</button>
+          <button class="opt-btn" data-value="매움">매움</button>
+          <button class="opt-btn" data-value="아주 매움">아주 매움</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>👥 기본 인원수</label>
+        <div class="servings-picker">
+          <button id="btn-servings-minus" class="btn btn-small">−</button>
+          <span id="profile-servings">2</span>인분
+          <button id="btn-servings-plus" class="btn btn-small">+</button>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button id="btn-profile-reset" class="btn btn-secondary">🗑️ 초기화</button>
+        <button id="btn-profile-save" class="btn btn-primary">💾 저장하기</button>
+      </div>
+      <p id="profile-status" class="status-msg hidden"></p>
+    </section>
+
+    <!-- 저장된 레시피 목록 -->
+    <section id="page-saved" class="page hidden">
+      <h2>📚 저장된 레시피</h2>
+
+      <div class="saved-controls">
+        <input type="text" id="saved-search" class="input-full" placeholder="🔍 검색어 입력...">
+        <div class="saved-sort">
+          <label>정렬:</label>
+          <select id="saved-sort-select">
+            <option value="date">최신순</option>
+            <option value="name">이름순</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="saved-list" class="recipe-cards"></div>
+      <p id="saved-empty" class="empty-msg hidden">저장된 레시피가 없습니다.</p>
+    </section>
+
+    <!-- 저장된 레시피 상세 -->
+    <section id="page-saved-detail" class="page hidden">
+      <div id="saved-detail-content"></div>
+      <div class="form-group">
+        <label>📝 메모</label>
+        <input type="text" id="saved-detail-memo" class="input-full" placeholder="메모를 입력하세요..." maxlength="100">
+      </div>
+      <div class="step-actions">
+        <button id="btn-saved-detail-back" class="btn btn-secondary">← 목록으로</button>
+        <button id="btn-saved-detail-memo-save" class="btn btn-primary">📝 메모 저장</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- API 키 입력 모달 -->
+  <div id="api-key-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>🔑 API 키 설정</h3>
+      <p>OpenRouter API 키를 입력해주세요.</p>
+      <input type="password" id="api-key-input" placeholder="sk-or-v1-...">
+      <button id="btn-save-key" class="btn btn-primary">저장</button>
+    </div>
+  </div>
+
+  <script src="js/env.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/imageAnalyzer.js"></script>
+  <script src="js/recipeGenerator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

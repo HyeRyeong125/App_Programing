@@ -1,0 +1,10 @@
+# Environment variables
+.env
+*.env
+js/env.js
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
